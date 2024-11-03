@@ -1,6 +1,14 @@
 from typing import Literal
+from djoser.serializers import UserCreateSerializer
+
 from django.contrib.auth.models import User
 from rest_framework import serializers
+
+class Myserializer(UserCreateSerializer):
+    class Meta(UserCreateSerializer.Meta):
+        fields=['email','username','password']
+
+        
 
 class SignUpSerializers(serializers.ModelSerializer):
     class Meta:

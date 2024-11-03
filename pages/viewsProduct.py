@@ -73,43 +73,63 @@ from rest_framework.pagination import PageNumberPagination
 #     product.delete()
 #     return Response(status=status.HTTP_401_UNAUTHORIZED)
 
-class product_list(mixins.ListModelMixin,mixins.CreateModelMixin,generics.GenericAPIView):
+# class product_list(mixins.ListModelMixin,mixins.CreateModelMixin,generics.GenericAPIView):
+#     queryset=Product.objects.all()
+#     serializer_class=ProductSubSerializer
+#     filterset_class=ProductFilter
+#     permission_classes=[IsAuthenticated]
+#     filter_backends=[DjangoFilterBackend]
+#     def get(self,request):
+#         return self.list(request)
+#     def post(self,request):
+#         return self.create(request)
+    
+# class product_pk(mixins.RetrieveModelMixin,mixins.UpdateModelMixin,mixins.DestroyModelMixin,generics.GenericAPIView):
+#     queryset=Product.objects.all()
+#     serializer_class=ProductSerializer
+#     def get(self,request,pk):
+#         return self.retrieve(request)
+#     def put(self,request,pk):
+#         return self.update(request)
+#     def delete(self,request,pk):
+#         return self.destroy(request)
+    
+    
+
+# @api_view(['GET'])
+# def getFilterProduct(request):
+#    try:
+#        filter_product=Product.objects.all()
+#        filterset=ProductFilter(request,queryset=filter_product)
+       
+#     #    resPage=3
+#     #    pagenator=PageNumberPagination()
+#     #    pagenator.page_size=resPage
+
+#     #    queryset=pagenator.paginate_queryset(filterset.qs,request)
+
+#    except filter_product.DoesNotExist:
+#        return Response(status=status.HTTP_404_NOT_FOUND)
+   
+#    serializer=ProductSubSerializer(filterset.qs,many=True)
+#    return Response(serializer.data)
+
+
+
+class Product_pk(generics.RetrieveUpdateDestroyAPIView):
     queryset=Product.objects.all()
     serializer_class=ProductSubSerializer
-    filterset_class=ProductFilter
-    permission_classes=[IsAuthenticated]
-    filter_backends=[DjangoFilterBackend]
-    def get(self,request):
-        return self.list(request)
-    def post(self,request):
-        return self.create(request)
+    # permission_classes=[IsAuthenticated]
+    def update(self, request, *args, **kwargs):
+        partial = kwargs.pop('partial', True)  # يجعل التعديل جزئي بشكل افتراضي
+        instance = self.get_object()
+        serializer = self.get_serializer(instance, data=request.data, partial=partial)
+        serializer.is_valid(raise_exception=True)
+        self.perform_update(serializer)
+        return Response(serializer.data)
     
-class product_pk(mixins.RetrieveModelMixin,mixins.UpdateModelMixin,mixins.DestroyModelMixin,generics.GenericAPIView):
+class Product_list(generics.ListCreateAPIView):
     queryset=Product.objects.all()
-    serializer_class=ProductSerializer
-    def get(self,request,pk):
-        return self.retrieve(request)
-    def put(self,request,pk):
-        return self.update(request)
-    def delete(self,request,pk):
-        return self.destroy(request)
-    
-    
+    serializer_class=ProductSubSerializer
+    # permission_classes=[IsAuthenticated]
 
-@api_view(['GET'])
-def getFilterProduct(request):
-   try:
-       filter_product=Product.objects.all()
-       filterset=ProductFilter(request,queryset=filter_product)
-       
-    #    resPage=3
-    #    pagenator=PageNumberPagination()
-    #    pagenator.page_size=resPage
-
-    #    queryset=pagenator.paginate_queryset(filterset.qs,request)
-
-   except filter_product.DoesNotExist:
-       return Response(status=status.HTTP_404_NOT_FOUND)
-   
-   serializer=ProductSubSerializer(filterset.qs,many=True)
-   return Response(serializer.data)

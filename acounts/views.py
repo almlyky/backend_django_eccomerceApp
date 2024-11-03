@@ -9,31 +9,35 @@ from .serializers import SignUpSerializers,UserSerializer
 from rest_framework.permissions import IsAuthenticated
 from django.utils.crypto import get_random_string
 from django.core.mail import send_mail
+from django.db.models import Q
 
 # Create your views here.
 
 @api_view(['POST'])
 def signUp(requset):
     data=requset.data
+    if data['password'] != data['confirmPassword']:
+                return Response({'error': 'Password are not same'},status=status.HTTP_400_BAD_REQUEST)
     serializer=SignUpSerializers(data=data)
     if serializer.is_valid():
         if not User.objects.filter(email=data['email']).exists():
             user=User.objects.create(
+
                 username=data['username'],
                 email=data['email'],
                 password = make_password(data['password']),
                 )
             return Response(
-                {'details':'Your account registered susccessfully!' },
+                {'status':'successfuly' },
                     status=status.HTTP_201_CREATED
                     )
         else:
             return Response(
-                     {'eroor':'This email already exists!' },
+                     {'status':'error', 'message':'This email already exists!' },
                     status=status.HTTP_400_BAD_REQUEST
                 )
-    else:
-        return Response(serializer.errors)  
+    # else:
+    #     return Response(serializer.errors)  
 
 
 
@@ -44,6 +48,7 @@ def register(request):
 
     if user.is_valid():
         if not User.objects.filter(username=data['email']).exists():
+            
             user = User.objects.create(
                 first_name = data['first_name'],
                 last_name = data['last_name'], 
@@ -51,6 +56,7 @@ def register(request):
                 username = data['email'], 
                 password = make_password(data['password']),
             )
+            
             return Response(
                 {'details':'Your account registered susccessfully!' },
                     status=status.HTTP_201_CREATED
@@ -80,7 +86,8 @@ def updateuser(request):
 @permission_classes([IsAuthenticated])
 def getuseer(requset):
     user=UserSerializer(requset.user)
-    return Response(user.data)
+    if user:
+        return Response(user.data)
 
 @api_view(['POST'])
 def forgerpassword(request):
@@ -120,7 +127,18 @@ def resetpassword(request,token):
     user.save()
     return Response({'details': 'Password reset done '})
 
+# @api_view(['GET'])
+# def login(request):
+#     data=request.data
+#     email=data['email']
+#     passowrd=make_password(data['password'])
 
+#     user=User.objects.get(Q(email=email) & Q(password=passowrd))
+#     if user.username!="":
+#         ser=UserSerializer(user,many=False)
+#         return Response(ser.data,status=status.HTTP_200_OK)
+#     return Response({"message":"emai or password uncorrect"},status=status.HTTP_200_OK)
+    
 
 
 

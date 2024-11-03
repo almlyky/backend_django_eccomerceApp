@@ -5,6 +5,7 @@ from rest_framework.response import Response
 from .serializers import *
 from rest_framework.decorators import api_view
 from rest_framework import status,generics,mixins,viewsets
+from rest_framework.permissions import IsAuthenticated
 
 
 # @api_view(['GET'])
@@ -45,23 +46,33 @@ from rest_framework import status,generics,mixins,viewsets
 #     Categories.delete()
 #     return Response(status=status.HTTP_401_UNAUTHORIZED)
 
-class cat_list(mixins.CreateModelMixin,mixins.ListModelMixin,generics.GenericAPIView):
-    queryset=Categories.objects.all()
-    serializer_class=CategoriesSerializer
+# class cat_list(mixins.CreateModelMixin,mixins.ListModelMixin,generics.GenericAPIView):
+#     queryset=Categories.objects.all()
+#     serializer_class=CategoriesSerializer
 
-    def get(self,request):
-        return self.list(request)
-    def post(self,request):
-        return self.create(request)
+#     def get(self,request):
+#         return self.list(request)
+#     def post(self,request):
+#         return self.create(request)
     
     
-class categories_pk(mixins.RetrieveModelMixin,mixins.UpdateModelMixin,mixins.DestroyModelMixin,generics.GenericAPIView):
+# class categories_pk(mixins.RetrieveModelMixin,mixins.UpdateModelMixin,mixins.DestroyModelMixin,generics.GenericAPIView):
+#     queryset=Categories.objects.all()
+#     serializer_class=CategoriesSerializer
+
+#     def get(self,request,pk):
+#         return self.retrieve(request)
+#     def put(self,request,pk):
+#         return self.update(request)
+#     def delete(self,request,pk):
+#         return self.destroy(request)
+
+class Cat_pk(generics.RetrieveUpdateDestroyAPIView):
     queryset=Categories.objects.all()
     serializer_class=CategoriesSerializer
-
-    def get(self,request,pk):
-        return self.retrieve(request)
-    def put(self,request,pk):
-        return self.update(request)
-    def delete(self,request,pk):
-        return self.destroy(request)
+    permission_classes=[IsAuthenticated]
+    
+class Cat_list(generics.ListCreateAPIView):
+    queryset=Categories.objects.all()
+    serializer_class=CategoriesSerializer
+    permission_classes=[IsAuthenticated]

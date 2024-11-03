@@ -15,7 +15,6 @@ from rest_framework import status,generics,mixins,viewsets
 
 @api_view(['GET'])
 def getAllProductfav(request,cat_fk,user_id):
-
     pr_fav=Favorite.objects.filter(user_fk=user_id).values('pr_fk')
     product=Product.objects.filter(cat_fk=cat_fk)
     product_filter = ProductFilter(request.GET, queryset=product)
@@ -27,10 +26,23 @@ def getAllProductfav(request,cat_fk,user_id):
             output_field=IntegerField()
         )
     )
-    # fav=Product.objects.filter(pr_id__in=Subquery(pr_fav)).annotate(fav=Value(1, output_field=IntegerField())).filter(cat_fk=cat_fk)
-    # non_favorite_products = Product.objects.exclude(pr_id__in=Subquery(pr_fav)).annotate(fav=Value(0, output_field=IntegerField())).filter(cat_fk=cat_fk)
-    # union=fav.union(non_favorite_products)
-    serialize=ProductSerializer(products,many=True)
+    serialize=ProductSerializer(products,many=True,context={'request': request})
+    return Response(serialize.data)
+
+@api_view(['GET'])
+def getAllProduct(request,user_id):
+    pr_fav=Favorite.objects.filter(user_fk=user_id).values('pr_fk')
+    product=Product.objects.all()
+    product_filter = ProductFilter(request.GET, queryset=product)
+
+    products = product_filter.qs.annotate(
+        fav=Case(
+            When(pr_id__in=pr_fav, then=Value(1)),
+            default=Value(0),
+            output_field=IntegerField()
+        )
+    )
+    serialize=ProductSerializer(products,many=True,context={'request': request})
     return Response(serialize.data)
 
 @api_view(['GET'])
@@ -48,7 +60,7 @@ def getSearch2(request, user_id):
         )
     )
     # تسلسل البيانات وإرجاعها
-    serialize = ProductSerializer(products, many=True)
+    serialize = ProductSerializer(products, many=True,context={'request': request})
     return Response(serialize.data)
 
 
@@ -88,5 +100,5 @@ class viewsets_fav(viewsets.ModelViewSet):
 @api_view(['GET'])
 def getfavorite(request,userid):
     pr_fav=Favorite.objects.filter(user_fk=userid)
-    serializer=FavoriteSerializer(pr_fav,many=True)
+    serializer=FavoriteSerializer(pr_fav,many=True, context={'request': request})
     return Response(serializer.data)

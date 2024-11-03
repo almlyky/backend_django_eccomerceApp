@@ -32,6 +32,10 @@ class ProductSerializer(serializers.ModelSerializer):
         model = Product
         fields = '__all__'
 
+        def get_image_url(self, obj):
+            request = self.context.get('request')
+            return request.build_absolute_uri(obj.pr_image.url) if obj.pr_image else None
+
 class ProductSubSerializer(serializers.ModelSerializer):
     class Meta:
         model = Product
@@ -48,6 +52,7 @@ class FavoriteSerializer(serializers.ModelSerializer):
         model =Favorite
         fields ='__all__'
 
+
 class FavoriteSubSerializer(serializers.ModelSerializer):
      class Meta:
         model =Favorite
@@ -58,6 +63,10 @@ class CartSerializers(serializers.ModelSerializer):
      class Meta:
         model =Cart
         fields ='__all__'
+
+        def get_image_url(self, obj):
+            request = self.context.get('request')
+            return request.build_absolute_uri(obj.pr_fk.pr_image.url) if obj.pr_fk.pr_image else None
 
 # class UsersSerializer(serializers.ModelSerializer):
 #      class Meta:

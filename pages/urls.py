@@ -11,7 +11,9 @@ router.register('fav',viewsFavorate.viewsets_fav)
 
 
 urlpatterns = [
-    path("categoties/",ViewsCategories.cat_list.as_view()),
+    path("categoties/",ViewsCategories.Cat_list.as_view()),
+    path("categoties/int:pk/",ViewsCategories.Cat_pk.as_view()),
+
 
     # path("categoties/<int:pk>/",ViewsCategories.cat_list.as_view()),    
 
@@ -19,7 +21,11 @@ urlpatterns = [
 
     # path("product/<int:pk>/",viewsProduct.product_pk.as_view()),
 
-    path("product/",viewsProduct.product_list.as_view()),
+    path("product/",viewsProduct.Product_list.as_view()),
+    path("product/<int:pk>/",viewsProduct.Product_pk.as_view()),
+    path("productAll/<int:user_id>/",viewsFavorate.getAllProduct),
+
+
 
     path("allproduct/<int:cat_fk>/<int:user_id>/",viewsFavorate.getAllProductfav),
 

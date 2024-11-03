@@ -24,19 +24,38 @@ def cartList(request,userid):
         serializer=CartSerializers(cart,many=True)
         return Response(serializer.data)
 
+# @api_view(['POST'])
+# def cartinsert(request):
+#         data=request.data
+#         user = get_object_or_404(User, id=data['user_fk'])
+#         product = get_object_or_404(Product, pr_id=data['pr_fk'])
+#         cartdata, created = Cart.objects.get_or_create(user_fk=user, pr_fk=product,quantity=data['quantity'])
+#         if created:
+#             serializer =CartSerializers(cartdata)
+#             return Response(serializer.data, status=status.HTTP_201_CREATED if created else status.HTTP_200_OK)
+#         return Response(status=status.HTTP_400_BAD_REQUEST)
+
 @api_view(['POST'])
 def cartinsert(request):
-        data=request.data
-        user = get_object_or_404(User, id=data['user_fk'])
-        product = get_object_or_404(Product, pr_id=data['pr_fk'])
-        # cart_exists = Cart.objects.filter(Q(user_fk=user) & Q(pr_fk=product)).exists()
-        # if cart_exists:
-        #     return Response({"error": "Product is already in cart."})
-        cartdata, created = Cart.objects.get_or_create(user_fk=user, pr_fk=product,quantity=data['quantity'])
-        if created:
-            serializer =CartSerializers(cartdata)
-            return Response(serializer.data, status=status.HTTP_201_CREATED if created else status.HTTP_200_OK)
-        return Response(status=status.HTTP_400_BAD_REQUEST)
+    data = request.data
+    user = get_object_or_404(User, id=data['user_fk'])
+    product = get_object_or_404(Product, pr_id=data['pr_fk'])
+
+    # تحقق إذا كان المنتج موجودًا بالفعل في السلة لهذا المستخدم
+    cart_item = Cart.objects.filter(user_fk=user, pr_fk=product).first()
+
+    if cart_item:
+        q=int(data['quantity'])
+        # إذا كان المنتج موجودًا، قم بزيادة الكمية
+        cart_item.quantity += 1
+        cart_item.save()
+        serializer = CartSerializers(cart_item)
+        return Response({"status":"exist","data": serializer.data}, status=status.HTTP_200_OK)
+    else:
+        # إذا لم يكن موجودًا، قم بإنشاء سجل جديد في السلة
+        cartdata = Cart.objects.create(user_fk=user, pr_fk=product, quantity=data['quantity'])
+        serializer = CartSerializers(cartdata)
+        return Response({"status":"success","data": serializer.data}, status=status.HTTP_201_CREATED)
 
 @api_view(['DELETE'])
 def cartdelete(request,pr_id,user_id):

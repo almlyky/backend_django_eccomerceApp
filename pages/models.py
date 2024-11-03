@@ -61,6 +61,12 @@ class Cart(models.Model):
     user_fk = models.ForeignKey(User,on_delete=models.CASCADE)
     pr_fk = models.ForeignKey(Product, on_delete=models.CASCADE)
     
+class Coupon(models.Model):
+    co=models.AutoField(primary_key=True)
+    co=models.CharField(max_length=50)
+    co_count=models.IntegerField()
+    co_discount=models.IntegerField()
+    co_expiredate=models.DateTimeField()
 
 
 # class MyUserManager(BaseUserManager):

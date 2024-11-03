@@ -73,7 +73,7 @@ class generic_list(generics.ListCreateAPIView):
     serializer_class=ProductSerializer
     # authentication_classes=[TokenAuthentication]
     # authentication_classes=[BasicAuthentication]
-    # permission_classes=[IsAuthenticated]
+    permission_classes=[IsAuthenticated]
 
 
 class geneeic_pk(generics.RetrieveUpdateDestroyAPIView):
