@@ -24,9 +24,11 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 SECRET_KEY = "django-insecure-g&1ewv7gcg$xk6rdd!2bhwssv-qc(9g4l5gq+z+vo0pw%0iw7^"
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = True
+DEBUG = False
 
-ALLOWED_HOSTS = ['127.0.0.1', 'localhost', '10.0.2.2']
+# ALLOWED_HOSTS = ['127.0.0.1', 'localhost', '10.0.2.2']
+ALLOWED_HOSTS = ['*']
+
 
 
 # Application definition
@@ -49,6 +51,9 @@ INSTALLED_APPS = [
 
 
 REST_FRAMEWORK={
+    'DEFAULT_RENDERER_CLASSES': [
+        'rest_framework.renderers.JSONRenderer',  # يدعم فقط JSON
+    ],
     'DEFAULT_FILTER_BACKENDS': ['django_filters.rest_framework.DjangoFilterBackend'],
 
      'DEFAULT_AUTHENTICATION_CLASSES': [
@@ -92,7 +97,7 @@ ROOT_URLCONF = "EcommerceApp.urls"
 TEMPLATES = [
     {
         "BACKEND": "django.template.backends.django.DjangoTemplates",
-        "DIRS": [],
+        "DIRS": ['template'],
         "APP_DIRS": True,
         "OPTIONS": {
             "context_processors": [
@@ -133,13 +138,23 @@ DATABASES = {
 # EMAIL_BACKEND='django.core.mail.backends.stmp.EmailBackend'
 # EMAIL_BACKEND='django.core.mail.backends.console.EmailBackend'
 
-EMAIL_HOST = 'sandbox.smtp.mailtrap.io'
-EMAIL_HOST_USER = '903c5796e1db0e'
-EMAIL_HOST_PASSWORD = '********d3b8'
-EMAIL_PORT = '2525'
-EMAIL_USE_TLS: False
-EMAIL_USE_SSL: False
+# EMAIL_HOST = 'sandbox.smtp.mailtrap.io'
+# EMAIL_HOST_USER = '903c5796e1db0e'
+# EMAIL_HOST_PASSWORD = '********d3b8'
+# EMAIL_PORT = '2525'
+# EMAIL_USE_TLS: False
+# EMAIL_USE_SSL: False
 
+EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
+EMAIL_HOST = 'smtp.gmail.com'
+EMAIL_PORT = 587
+EMAIL_USE_TLS = True
+EMAIL_HOST_USER = 'abubaker773880@gmail.com'
+
+EMAIL_HOST_PASSWORD = 'wrim ezct qhex bgog'
+
+# EMAIL_USE_SSL: False
+# wrim ezct qhex bgog
 # Password validation
 # https://docs.djangoproject.com/en/5.1/ref/settings/#auth-password-validators
 

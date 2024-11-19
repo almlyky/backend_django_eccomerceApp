@@ -68,6 +68,12 @@ class CartSerializers(serializers.ModelSerializer):
             request = self.context.get('request')
             return request.build_absolute_uri(obj.pr_fk.pr_image.url) if obj.pr_fk.pr_image else None
 
+class CouponSerializer(serializers.ModelSerializer):
+    class Meta:
+        model=Coupon
+        fields='__all__'
+        
+        
 # class UsersSerializer(serializers.ModelSerializer):
 #      class Meta:
 #         model =User

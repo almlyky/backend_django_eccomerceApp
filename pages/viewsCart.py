@@ -21,7 +21,7 @@ from rest_framework import status,generics,mixins,viewsets
 @api_view(['GET'])
 def cartList(request,userid):
         cart=Cart.objects.filter(user_fk=userid)
-        serializer=CartSerializers(cart,many=True)
+        serializer=CartSerializers(cart,many=True,context={'request': request})
         return Response(serializer.data)
 
 # @api_view(['POST'])

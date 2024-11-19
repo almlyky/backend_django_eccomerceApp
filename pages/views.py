@@ -9,6 +9,7 @@ from rest_framework.decorators import api_view
 from rest_framework.authentication import BasicAuthentication,TokenAuthentication
 from rest_framework.permissions import IsAuthenticated
 
+
 class pro(APIView):
     def get(self,request):
         pr=Product.objects.all()
@@ -16,27 +17,27 @@ class pro(APIView):
         return Response(serial.data)
 
 
-# @api_view(["GET","POST","DELETE"])
-# def product(request,pk):
-#     if request.method=='GET':
-#         pr2=Product.objects.all()
-#         serial=ProductSerializer(pr2,many=True)
-#         return Response(serial.data)
-#     elif request.method=='POST':
+@api_view(["GET","POST","DELETE"])
+def product(request,pk):
+    if request.method=='GET':
+        pr2=Product.objects.all()
+        serial=ProductSerializer(pr2,many=True)
+        return Response(serial.data)
+    elif request.method=='POST':
         
-#         serializer = ProductSerializer(data=request.data)
-#         if serializer.is_valid():
-#             serializer.save()
-#             return Response(serializer.data, status=status.HTTP_201_CREATED)
-#         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+        serializer = ProductSerializer(data=request.data)
+        if serializer.is_valid():
+            serializer.save()
+            return Response(serializer.data, status=status.HTTP_201_CREATED)
+        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
     
-#     elif request.method=='DELETE':
-#         try:
-#             pro=Product.objects.get(pr_id=pk)
-#         except Product.DoesNotExist:
-#             return Response(status=status.HTTP_401_UNAUTHORIZED)
-#         pro.delete()
-#         return Response(status=status.HTTP_200_OK)
+    elif request.method=='DELETE':
+        try:
+            pro=Product.objects.get(pr_id=pk)
+        except Product.DoesNotExist:
+            return Response(status=status.HTTP_401_UNAUTHORIZED)
+        pro.delete()
+        return Response(status=status.HTTP_200_OK)
 
     # pr=[
     #     {'prid':1,'prname':"ali"},
