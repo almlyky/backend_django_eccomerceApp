@@ -9,7 +9,6 @@ class Myserializer(UserCreateSerializer):
         fields=['email','username','password']
 
         
-
 class SignUpSerializers(serializers.ModelSerializer):
     class Meta:
         model=User
@@ -24,4 +23,4 @@ class SignUpSerializers(serializers.ModelSerializer):
 class UserSerializer(serializers.ModelSerializer):
     class Meta:
         model = User
-        fields = ['email', 'username']
+        fields = ['pk','email', 'username']

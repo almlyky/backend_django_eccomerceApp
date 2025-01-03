@@ -124,13 +124,6 @@ def resetpassword(request,token):
 #         ser=UserSerializer(user,many=False)
 #         return Response(ser.data,status=status.HTTP_200_OK)
 #     return Response({"message":"emai or password uncorrect"},status=status.HTTP_200_OK)
-    
-
-
-
-
-
-
 
 
 # @api_view(['POST'])

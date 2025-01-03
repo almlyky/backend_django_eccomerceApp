@@ -81,7 +81,7 @@ def insert(request):
     # serializer = FavoriteSerializer(data=request.data)
     favorite, created = Favorite.objects.get_or_create(user_fk=user, pr_fk=product)
     if created:
-        serializer =FavoriteSerializer(favorite)
+        serializer =FavoriteSerializer(favorite,context={'request': request})
         return Response(serializer.data, status=status.HTTP_201_CREATED if created else status.HTTP_200_OK)
     return Response(status=status.HTTP_400_BAD_REQUEST)
 

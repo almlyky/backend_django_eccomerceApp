@@ -54,7 +54,7 @@ def cartinsert(request):
     else:
         # إذا لم يكن موجودًا، قم بإنشاء سجل جديد في السلة
         cartdata = Cart.objects.create(user_fk=user, pr_fk=product, quantity=data['quantity'])
-        serializer = CartSerializers(cartdata)
+        serializer = CartSerializers(cartdata,context={'request': request})
         return Response({"status":"success","data": serializer.data}, status=status.HTTP_201_CREATED)
 
 @api_view(['DELETE'])

@@ -52,6 +52,11 @@ class FavoriteSerializer(serializers.ModelSerializer):
         model =Favorite
         fields ='__all__'
 
+        def get_image_url(self, obj):
+            request = self.context.get('request')
+            return request.build_absolute_uri(obj.pr_fk.pr_image.url) if obj.pr_fk.pr_image else None
+        
+
 
 class FavoriteSubSerializer(serializers.ModelSerializer):
      class Meta:

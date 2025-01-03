@@ -18,16 +18,10 @@ def checCoupon(request):
     coName=request.data['co_name']
     coupon=Coupon.objects.filter(co_name=coName).first()
     date=datetime.now().strftime('%Y-%m-%d')
-
     
     if coupon :
         expiry_date = coupon.co_expiredate.strftime('%Y-%m-%d')
         count=coupon.co_count
-        # # جعل `expiry_date` واعياً بالمناطق الزمنية إذا لم يكن كذلك
-        # if timezone.is_naive(expiry_date):
-        #     expiry_date = timezone.make_aware(expiry_date)
-        # # print(coupon.co_expiredate.date)
-
         if expiry_date > date and count>0:
             # print(coupon.co_expiredate)
             serializer=CouponSerializer(coupon,many=False)
