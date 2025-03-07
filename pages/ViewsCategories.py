@@ -70,7 +70,7 @@ from rest_framework.permissions import IsAuthenticated
 class Cat_pk(generics.RetrieveUpdateDestroyAPIView):
     queryset=Categories.objects.all()
     serializer_class=CategoriesSerializer
-    # permission_classes=[IsAuthenticated]
+    permission_classes=[IsAuthenticated]
     
 class Cat_list(generics.ListCreateAPIView):
     queryset=Categories.objects.all()

@@ -23,7 +23,6 @@
 # products/serializers.py
 
 from rest_framework import serializers
-from django.contrib.auth.models import User
 from .models import *
 
 class ProductSerializer(serializers.ModelSerializer):
@@ -40,6 +39,12 @@ class ProductSubSerializer(serializers.ModelSerializer):
     class Meta:
         model = Product
         fields = '__all__'
+
+class OfferSerializer(serializers.ModelSerializer):
+    product=ProductSubSerializer(read_only=True)
+    class Meta:
+        model=Offer
+        fields='__all__'
 
 class CategoriesSerializer(serializers.ModelSerializer):
      class Meta:
@@ -77,8 +82,29 @@ class CouponSerializer(serializers.ModelSerializer):
     class Meta:
         model=Coupon
         fields='__all__'
+
+class OrderSerializer(serializers.ModelSerializer):
+    # user = serializers.PrimaryKeyRelatedField(queryset=User.objects.all(), source='user', write_only=True)
+    class Meta:
+        model=Order
+        fields='__all__'
         
         
+class OrderItemSerializer(serializers.ModelSerializer):
+    product=ProductSubSerializer(read_only=True)
+    product_id = serializers.PrimaryKeyRelatedField(queryset=Product.objects.all(), source='product') 
+    class Meta:
+        model=OrderItem
+        fields='__all__'  
+
+class AddsSerializer(serializers.ModelSerializer):
+    class Meta:
+        model=Adds
+        fields='__all__'
+        def get_image_url(self, obj):
+            request = self.context.get('request')
+            return request.build_absolute_uri(obj.iamge.url) if obj.iamge else None
+           
 # class UsersSerializer(serializers.ModelSerializer):
 #      class Meta:
 #         model =User

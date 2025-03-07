@@ -11,7 +11,7 @@ from rest_framework.decorators import api_view
 from django.db.models import Q,Value,IntegerField
 from django.db.models import Case, When, Value, IntegerField
 from rest_framework import status,generics,mixins,viewsets
-
+from acounts.models import CustomUser
 
 @api_view(['GET'])
 def getAllProductfav(request,cat_fk,user_id):
@@ -76,7 +76,7 @@ def deletfav(request,pr_id,user_id):
 @api_view(['POST'])
 def insert(request):
     data=request.data
-    user = get_object_or_404(User, id=data['user_fk'])
+    user = get_object_or_404(CustomUser, id=data['user_fk'])
     product = get_object_or_404(Product, pr_id=data['pr_fk'])
     # serializer = FavoriteSerializer(data=request.data)
     favorite, created = Favorite.objects.get_or_create(user_fk=user, pr_fk=product)

@@ -28,11 +28,16 @@ DEBUG = True
 
 # ALLOWED_HOSTS = ['127.0.0.1', 'localhost', '10.0.2.2']
 ALLOWED_HOSTS = ['*']
-
+CORS_ALLOWED_ORIGINS = [
+    'http://localhost:8000',
+    'http://localhost:5173',
+]
 # Application definition
 
 INSTALLED_APPS = [
     "pages.apps.PagesConfig",
+    # "acounts.apps.AcountsConfig",
+    'acounts',
     "django.contrib.admin",
     "django.contrib.auth",
     "django.contrib.contenttypes",
@@ -43,8 +48,8 @@ INSTALLED_APPS = [
     'django_filters',
     "rest_framework.authtoken",
     'rest_framework_simplejwt',
-    'acounts.apps.AcountsConfig',
-    'djoser'
+    'djoser',
+    'corsheaders'
 ]
 
 
@@ -83,6 +88,8 @@ DJOSER={
 MIDDLEWARE = [
     "django.middleware.security.SecurityMiddleware",
     "django.contrib.sessions.middleware.SessionMiddleware",
+    'corsheaders.middleware.CorsMiddleware',
+    'django.middleware.common.CommonMiddleware',
     "django.middleware.common.CommonMiddleware",
     "django.middleware.csrf.CsrfViewMiddleware",
     "django.contrib.auth.middleware.AuthenticationMiddleware",
@@ -125,7 +132,7 @@ WSGI_APPLICATION = "EcommerceApp.wsgi.application"
 DATABASES = {
     'default': {
         'ENGINE'  : 'django.db.backends.mysql', # <-- UPDATED line 
-        'NAME'    : 'djangoEccomerce3',             # <-- UPDATED line 
+        'NAME'    : 'djangoEccomerce_new',             # <-- UPDATED line 
         'USER'    : 'root',                     # <-- UPDATED line
         'PASSWORD': '',              # <-- UPDATED line
         'HOST'    : 'localhost',                # <-- UPDATED line
@@ -147,12 +154,12 @@ EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
 EMAIL_HOST = 'smtp.gmail.com'
 EMAIL_PORT = 587
 EMAIL_USE_TLS = True
-EMAIL_HOST_USER = 'abubaker773880@gmail.com'
-
-EMAIL_HOST_PASSWORD = 'wrim ezct qhex bgog'
+EMAIL_HOST_USER = 'abubaker773880@gmail.com'  # استبدل بالبريد الصحيح
+EMAIL_HOST_PASSWORD = 'ahbf jebg tvzk rloy'
+# EMAIL_HOST_PASSWORD = 'wrim ezct qhex bgog'
 
 # EMAIL_USE_SSL: False
-# wrim ezct qhex bgog
+# ahbf jebg tvzk rloy
 # Password validation
 # https://docs.djangoproject.com/en/5.1/ref/settings/#auth-password-validators
 
@@ -194,5 +201,7 @@ MEDIA_ROOT=os.path.join(BASE_DIR,'media')
 # Default primary key field type
 # https://docs.djangoproject.com/en/5.1/ref/settings/#default-auto-field
 
-DEFAULT_AUTO_FIELD = "django.db.models.BigAutoField"
+# DEFAULT_AUTO_FIELD = "django.db.models.BigAutoField"
 # AUTH_USER_MODEL = 'pages.MyUser'
+AUTH_USER_MODEL = 'acounts.CustomUser'
+

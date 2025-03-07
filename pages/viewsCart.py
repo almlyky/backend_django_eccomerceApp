@@ -10,6 +10,7 @@ from rest_framework.decorators import api_view
 from django.db.models import Q,Value,IntegerField,F
 from django.db.models import Subquery, OuterRef
 from rest_framework import status,generics,mixins,viewsets
+from acounts.models import CustomUser
 
 
 # @api_view(['GET'])
@@ -38,7 +39,7 @@ def cartList(request,userid):
 @api_view(['POST'])
 def cartinsert(request):
     data = request.data
-    user = get_object_or_404(User, id=data['user_fk'])
+    user = get_object_or_404(CustomUser, id=data['user_fk'])
     product = get_object_or_404(Product, pr_id=data['pr_fk'])
 
     # تحقق إذا كان المنتج موجودًا بالفعل في السلة لهذا المستخدم
@@ -58,13 +59,22 @@ def cartinsert(request):
         return Response({"status":"success","data": serializer.data}, status=status.HTTP_201_CREATED)
 
 @api_view(['DELETE'])
-def cartdelete(request,pr_id,user_id):
+def cartdelete(request,cartId):
     try:
-        cart=Cart.objects.get(Q(pr_fk=pr_id) & Q(user_fk=user_id))
+        cart=Cart.objects.get(cart_id=cartId)
     except Cart.DoesNotExist:
         return Response(status=status.HTTP_404_NOT_FOUND)
     cart.delete()
     return Response({"status":"succes delete"},status=status.HTTP_200_OK)
+
+@api_view(['DELETE'])
+def cartdeleteall(request,user_id):
+    try:
+        cart=Cart.objects.filter(user_fk=user_id)
+    except Cart.DoesNotExist:
+        return Response(status=status.HTTP_404_NOT_FOUND)
+    cart.delete()
+    return Response({"status":"succes delete all"},status=status.HTTP_200_OK)
 
 @api_view(['PUT'])
 def updatequantity(request,cart_id):
@@ -79,7 +89,15 @@ def updatequantity(request,cart_id):
             cart.save()
     # ser=CartSerializers(cart)
     return Response({"status":"succes updated quantity"},status=status.HTTP_200_OK)
-         
+
+@api_view(['PUT'])
+def updatecart(request,cart_id):
+    data=request.data
+    cart=Cart.objects.get(cart_id=cart_id)
+    cart.order=data['order']
+    cart.save()
+    # ser=CartSerializers(cart)
+    return Response({"status":"succes updated cart"},status=status.HTTP_200_OK)
     
     # try:
     #     cart=Cart.objects.get(Q(pr_fk=pr_id) & Q(user_fk=user_id))

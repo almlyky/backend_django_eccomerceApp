@@ -5,5 +5,7 @@ from .models import *
 admin.site.register(Product)
 admin.site.register(Categories)
 admin.site.register(Favorite)
+admin.site.register(Adds)
+
 
 

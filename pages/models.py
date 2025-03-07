@@ -9,9 +9,10 @@ from django.db import models
 from django.conf import settings
 from django.db.models.signals import post_save,post_delete
 from django.dispatch import receiver
-from django.contrib.auth.models import User
 from rest_framework.authtoken.models import Token
 from django.contrib.auth.models import AbstractBaseUser, BaseUserManager
+from django.conf import settings
+
 
 class Categories(models.Model):
     cat_id = models.AutoField(primary_key=True)
@@ -28,38 +29,72 @@ class Product(models.Model):
     pr_name_en = models.CharField(max_length=50)
     pr_image= models.ImageField(upload_to="images/product/%y/%m/%d")
     pr_cost = models.IntegerField()
+    pr_cost_new=models.IntegerField(default=0)
     pr_detail = models.CharField(max_length=150)
     pr_detail_en = models.CharField(max_length=150)
+    pr_discoutn=models.IntegerField(default=0)
     cat_fk = models.ForeignKey(Categories, on_delete=models.RESTRICT)
+
+    def save(self, *args, **kwargs):
+        self.pr_cost_new=self.pr_cost-(self.pr_cost*(self.pr_discoutn / 100))
+        return super().save(*args, **kwargs)
+
     def __str__(self):
         return self.pr_name_en
 
-# class Users(models.Model):
-#     # user_id = models.AutoField(primary_key=True, editable=False)
-#     user_id = models.AutoField(primary_key=True)
-#     user_name = models.CharField(max_length=100)
-#     user_email = models.CharField(max_length=100)
-#     user_verficode = models.IntegerField()
-#     user_aprove = models.IntegerField()
-#     date_create = models.DateTimeField()
-#     user_password = models.CharField(max_length=100)
 
-    # class Meta:
-    #     managed = False
-    #     db_table = 'users'
+    
+class Offer(models.Model):
+    product = models.ForeignKey(Product, on_delete=models.CASCADE)
+    discount_percentage = models.IntegerField()
+    start_date = models.DateField()
+    end_date = models.DateField()
 
+class Adds(models.Model):
+    image = models.ImageField(upload_to="images/adds/%y/%m/%d")
+    url=models.URLField()
+    date_adds=models.DateField(auto_now_add=True)
+    expired_adds=models.DateField()
+    # discount_percentage = models.IntegerField()
+    # start_date = models.DateField()
+    # end_date = models.DateField()
 class Favorite(models.Model):
     # fav_no = models.AutoField(primary_key=True, editable=False)
     fav_no = models.AutoField(primary_key=True)
-    user_fk = models.ForeignKey(User,on_delete=models.CASCADE)
+    user_fk = models.ForeignKey(settings.AUTH_USER_MODEL,on_delete=models.CASCADE)
     pr_fk = models.ForeignKey(Product, on_delete=models.CASCADE)
 
 
 class Cart(models.Model):
     cart_id=models.AutoField(primary_key=True)
     quantity=models.IntegerField()
-    user_fk = models.ForeignKey(User,on_delete=models.CASCADE)
+    user_fk = models.ForeignKey(settings.AUTH_USER_MODEL,on_delete=models.CASCADE)
     pr_fk = models.ForeignKey(Product, on_delete=models.CASCADE)
+    order=models.IntegerField(default=0)
+
+class Order(models.Model):
+    STATUS_CHOICES = [
+        ('pending', 'Pending'),
+        ('shipped', 'Shipped'),
+        ('delivered', 'Delivered'),
+        ('cancelled', 'Cancelled'),
+    ]
+    user = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE)
+    #product = models.ManyToManyField(Product, through='OrderItem')
+    status = models.CharField(max_length=20, choices=STATUS_CHOICES, default='pending')
+    payment_status = models.CharField(max_length=50, choices=[('cash', 'نقدا'), ('transfer', 'ارسال حوالة')], default='cash')
+    order_type=models.CharField(max_length=20,choices=[('delivery','Delivery'),('recive','Recive')],default='delivery')
+    created_at = models.DateTimeField(auto_now_add=True)
+    address=models.CharField(max_length=100)
+    total_order=models.IntegerField()
+    order_code=models.CharField(max_length=100)
+    
+
+class OrderItem(models.Model):
+    order = models.ForeignKey(Order, on_delete=models.CASCADE)
+    product = models.ForeignKey(Product, on_delete=models.CASCADE)
+    quantity = models.PositiveIntegerField()
+
     
 class Coupon(models.Model):
     co_id=models.AutoField(primary_key=True)
