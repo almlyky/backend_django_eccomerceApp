@@ -1,6 +1,5 @@
 from typing import Literal
 from djoser.serializers import UserCreateSerializer
-
 # from django.contrib.auth.models import User
 from rest_framework import serializers
 from .models import CustomUser
@@ -14,7 +13,7 @@ class SignUpSerializers(serializers.ModelSerializer):
     class Meta:
         model=CustomUser
         fields=['username','email','password','is_active','pk']
-        
+
         # extra_kwargs = {
         #     'username': {'required':True ,'allow_blank':False},
         #     'email' : {'required':True ,'allow_blank':False},
