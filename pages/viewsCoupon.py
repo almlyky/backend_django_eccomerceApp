@@ -18,12 +18,24 @@ def checCoupon(request):
     coName=request.data['co_name']
     coupon=Coupon.objects.filter(co_name=coName).first()
     date=datetime.now().strftime('%Y-%m-%d')
-    
     if coupon :
         expiry_date = coupon.co_expiredate.strftime('%Y-%m-%d')
         count=coupon.co_count
         if expiry_date > date and count>0:
+            coupon.co_count -=1
+            coupon.save()
             # print(coupon.co_expiredate)
             serializer=CouponSerializer(coupon,many=False)
             return Response({"status":"success","data":serializer.data},status=status.HTTP_200_OK)
     return Response({"status":"error","message":"the coupon not found or expired !"},status=status.HTTP_404_NOT_FOUND)
+
+class couponList(generics.ListCreateAPIView):
+    queryset=Coupon.objects.all()
+    serializer_class=CouponSerializer
+    # permission_classes=[IsAuthenticated]
+
+
+class coupon_pk(generics.RetrieveUpdateDestroyAPIView):
+    queryset=Coupon.objects.all()
+    serializer_class=CouponSerializer
+    # permission_classes=[IsAuthenticated]

@@ -69,6 +69,9 @@ urlpatterns = [
 
     # url coupon 
     path("checkcoupon/",viewsCoupon.checCoupon),
+    path("coupon/",viewsCoupon.couponList.as_view()),
+    path("coupon/<int:pk>/",viewsCoupon.coupon_pk.as_view()),
+
 
     # url order
     path("order/",ViewsOrder.OrderCreateList.as_view()),
